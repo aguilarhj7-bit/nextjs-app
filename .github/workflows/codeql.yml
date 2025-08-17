@@ -1,0 +1,35 @@
+# nombre Workflow 
+name: Deploy to Firebase Hosting
+
+# ¿Cuándo se ejecuta?
+on:
+  push:
+    branches:
+      - main  # Se ejecuta cuando haces push a la rama 'main'
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Clona tu repositorio
+      - uses: actions/checkout@v4
+
+      # 2. Si tu proyecto necesita ser construido (ej. con Node.js)
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - name: Install Dependencies
+        run: npm install
+      - name: Build
+        run: npm run build
+
+      # 3. Despliega a Firebase Hosting
+      - name: Deploy to Firebase
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}'
+          channelId: live
+          projectId: serconfin-reimagined
